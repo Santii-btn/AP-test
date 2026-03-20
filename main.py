@@ -1,5 +1,13 @@
 import os; import hashlib;import random; import getpass; import sqlite3; from cryptography.fernet import Fernet; import base64
 
+def title():
+    print(r"    ____                 _       __               __   __  ___                                 ")
+    print(r"   / __ \____ __________| |     / /___  _________/ /  /  |/  /___ _____  ____ _____ ____  _____")
+    print(r"  / /_/ / __ `/ ___/ ___/ | /| / / __ \/ ___/ __  /  / /|_/ / __ `/ __ \/ __ `/ __ `/ _ \/ ___/")
+    print(r" / ____/ /_/ (__  |__  )| |/ |/ / /_/ / /  / /_/ /  / /  / / /_/ / / / / /_/ / /_/ /  __/ /    ")
+    print(r"/_/    \__,_/____/____/ |__/|__/\____/_/   \__,_/  /_/  /_/\__,_/_/ /_/\__,_/\__, /\___/_/     ")
+    print(r"                                                                            /____/             ")
+    print("\n")
 
 # End to End password encryption -----------
 def derive_key(password: str) -> Fernet:
@@ -90,17 +98,18 @@ def login():
 # Account Manager -------------------------------------
 
 def user_system(username, user_password):
+    os.system("clear")
     fernet = derive_key(user_password)
     db_filename = f"{username}.db"
     with sqlite3.connect(db_filename) as conn:
         cursor = conn.cursor()
 
         while True:
-            print("\n--- Account Manager ---")
+            title()
             print("1. View All Accounts")
             print("2. Add Account")
             print("\n 0. Logout")
-            choice = input("Choose: ").strip()
+            choice = input("Choose an option: ")
 
             if choice == "1":
                 cursor.execute("SELECT site_name, site_user, site_pass FROM passwords")
@@ -108,6 +117,7 @@ def user_system(username, user_password):
                 if rows:
                     print("\nYour saved accounts:")
                     for row in rows:
+                        site_name, site_user, e_site_pass = row
                         decrypted_pass = fernet.decrypt(e_site_pass).decode()
                         print(f"Site: {site_name}, User: {site_user}, Password: {decrypted_pass}")
                 else:
@@ -126,9 +136,7 @@ def user_system(username, user_password):
                 print("Account saved.")
 
             elif choice == "0":
-                print("Logging out...")
                 break
-
             else:
                 print("Invalid option, try again.")
 
@@ -137,25 +145,25 @@ def acc_l_c():
     setup_database()
 
     while True:
-        print("\n--- MENU ---\n")
+        os.system("clear")
+        title()
         print("1. Register")
         print("2. Login\n")
-        print("3. Exit")
+        print("0. Exit")
 
-        choice = input("Choose an option: ")
+        input1 = input("Choose an option: ")
 
-        if choice == "1":
+        if input1 == "1":
             Register()
-        elif choice == "2":
+        elif input1 == "2":
             user_data = login()
             if user_data:
                 username, user_password = user_data
                 user_system(username, user_password)
-        elif choice == "3":
-            print("Goodbye!")
+        elif input1 == "0":
             break
         else:
-            print("Invalid choice.")
+            print("no")   
 
 # Password Generator
 letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
@@ -176,6 +184,10 @@ def PasswordGen():
     random.shuffle(combinding)
     print("Here is you're Password:")
     output = print("".join(combinding))
+    clearinput = input("Press Enter to Return... ")
+    if clearinput == "":
+        os.system("clear")
+        return StartMenu(), inputsys()
 
 def StartMenu():
     print(r"    ____                 _       __               __   __  ___                                 ")
@@ -210,13 +222,7 @@ def inputsys():
     elif input1 == "0":
         quit()
     else:
-        print(r"    ____                 _       __               __   __  ___                                 ")
-        print(r"   / __ \____ __________| |     / /___  _________/ /  /  |/  /___ _____  ____ _____ ____  _____")
-        print(r"  / /_/ / __ `/ ___/ ___/ | /| / / __ \/ ___/ __  /  / /|_/ / __ `/ __ \/ __ `/ __ `/ _ \/ ___/")
-        print(r" / ____/ /_/ (__  |__  )| |/ |/ / /_/ / /  / /_/ /  / /  / / /_/ / / / / /_/ / /_/ /  __/ /    ")
-        print(r"/_/    \__,_/____/____/ |__/|__/\____/_/   \__,_/  /_/  /_/\__,_/_/ /_/\__,_/\__, /\___/_/     ")
-        print(r"                                                                            /____/             ")
-        print("\n")
+        title()
         print("1. Sign In / Create Account")
         print("2. Generate Passwords \n")
         print("0. Exit")
